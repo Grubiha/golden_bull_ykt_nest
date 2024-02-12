@@ -1,0 +1,64 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model Editor {
+  telegramId Int      @id @map("telegram_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  nickname String? @unique
+
+  role Role @default(MANAGER)
+}
+
+enum Role {
+  ADMIN
+  EDITOR
+  MANAGER
+}
+
+model User {
+  telegramId Int      @id @map("telegram_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  nickname String? @unique
+
+  @@map("user")
+}
+
+model Category {
+  id        String   @id @default(uuid()) @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  name String
+
+  products Product[]
+
+  @@map("category")
+}
+
+model Product {
+  id        String   @id @default(uuid()) @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId String   @db.Uuid
+
+  @@map("product")
+}
+// model Set {
+
+// }
