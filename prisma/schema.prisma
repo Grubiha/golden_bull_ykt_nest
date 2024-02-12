@@ -10,15 +10,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model Editor {
-  telegramId Int      @id @map("telegram_id")
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  nickname String? @unique
+  user       User    @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
+  telegramId Int     @id @map("telegram_id")
 
   role Role @default(MANAGER)
+
+  @@map("editor")
 }
 
 enum Role {
@@ -28,21 +29,23 @@ enum Role {
 }
 
 model User {
-  telegramId Int      @id @map("telegram_id")
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  nickname String? @unique
+  telegramId Int     @id @map("telegram_id")
+  nickname   String? @unique
+  editor     Editor?
 
   @@map("user")
 }
 
 model Category {
-  id        String   @id @default(uuid()) @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  name String
+  id     String @id @default(uuid()) @db.Uuid
+  editor String @db.Uuid
+  name   String
 
   products Product[]
 
@@ -50,15 +53,18 @@ model Category {
 }
 
 model Product {
-  id        String   @id @default(uuid()) @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+
+  id     String @id @default(uuid()) @db.Uuid
+  editor String @db.Uuid
 
   category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   categoryId String   @db.Uuid
 
   @@map("product")
 }
+
 // model Set {
 
 // }
