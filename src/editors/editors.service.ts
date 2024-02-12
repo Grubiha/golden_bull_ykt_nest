@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import {
   AddEditorByIdDto,
@@ -6,7 +10,7 @@ import {
   findEditorByIdDto,
   findEditorByNicknameDto,
 } from './dto/editors.req.dto';
-import { Editor } from '@prisma/client';
+import { Editor, Role } from '@prisma/client';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
@@ -37,8 +41,9 @@ export class EditorsService {
       this.usersService.findUserById(dto),
       this.findEditorById(dto),
     ]);
-    if (foundEditor) throw new Error('Уже существует');
-    if (!foundUser) throw new Error('Пользователь не найден');
+    if (foundEditor) throw new BadRequestException('Уже добавлен');
+    if (!(dto.role in Role)) throw new BadRequestException('Неправильная роль');
+    if (!foundUser) throw new NotFoundException('Пользователь не найден');
 
     return this.prismaService.editor.create({ data: dto });
   }
@@ -48,8 +53,9 @@ export class EditorsService {
       this.usersService.findUserByNickname(dto),
       this.findEditorByNickname(dto),
     ]);
-    if (foundEditor) throw new Error('Уже существует');
-    if (!foundUser) throw new Error('Пользователь не найден');
+    if (foundEditor) throw new BadRequestException('Уже добавлен');
+    if (!(dto.role in Role)) throw new BadRequestException('Неправильная роль');
+    if (!foundUser) throw new NotFoundException('Пользователь не найден');
 
     return this.prismaService.editor.create({
       data: { ...dto, telegramId: foundUser.telegramId },
