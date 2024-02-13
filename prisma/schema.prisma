@@ -14,8 +14,8 @@ model Editor {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  user       User    @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
-  telegramId Int     @id @map("telegram_id")
+  user       User @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
+  telegramId Int  @id @map("telegram_id")
 
   role Role @default(MANAGER)
 
@@ -34,7 +34,9 @@ model User {
 
   telegramId Int     @id @map("telegram_id")
   nickname   String? @unique
-  editor     Editor?
+  threadId   Int     @unique @default(-1)
+
+  editor Editor?
 
   @@map("user")
 }

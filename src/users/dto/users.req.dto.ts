@@ -10,3 +10,12 @@ export class findUserByIdDto {
 export class findUserByNicknameDto {
   readonly nickname: string;
 }
+
+export class setTreadDto {
+  readonly telegramId: number;
+  readonly threadId: number;
+}
+
+export class findUserByThreadDto {
+  readonly threadId: number;
+}

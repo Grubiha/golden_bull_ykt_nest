@@ -4,6 +4,8 @@ import {
   CreateUserDto,
   findUserByIdDto,
   findUserByNicknameDto,
+  findUserByThreadDto,
+  setTreadDto,
 } from './dto/users.req.dto';
 import { User } from '@prisma/client';
 
@@ -23,6 +25,12 @@ export class UsersService {
     });
   }
 
+  async findUserByThread({ threadId }: findUserByThreadDto): Promise<User> {
+    return this.prismaService.user.findUnique({
+      where: { threadId },
+    });
+  }
+
   async create(dto: CreateUserDto): Promise<User> {
     const foundUser = await this.findUserById(dto);
     if (foundUser) {
@@ -35,5 +43,12 @@ export class UsersService {
       return foundUser;
     }
     return this.prismaService.user.create({ data: dto });
+  }
+
+  async setThread({ telegramId, threadId }: setTreadDto) {
+    return this.prismaService.user.update({
+      where: { telegramId },
+      data: { threadId },
+    });
   }
 }
