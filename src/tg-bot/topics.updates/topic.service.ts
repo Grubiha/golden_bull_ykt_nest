@@ -33,9 +33,12 @@ export class TopicUpdates implements OnModuleInit {
           });
           return;
         }
-        bot.copyMessage(user.telegramId, mainGroupId, messageId).catch(() => {
-          return;
-        });
+        bot
+          .copyMessage(user.telegramId, mainGroupId, messageId)
+          .catch(() => {
+            return;
+          })
+          .then((res) => console.log(res));
         return;
       }
 
@@ -69,7 +72,8 @@ export class TopicUpdates implements OnModuleInit {
             .catch(() => {
               return;
             });
-        });
+        })
+        .then((res) => console.log(res));
     });
   }
 

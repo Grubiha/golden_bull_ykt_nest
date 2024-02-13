@@ -13,6 +13,10 @@ import { User } from '@prisma/client';
 export class UsersService {
   constructor(private readonly prismaService: PrismaService) {}
 
+  async findAll(): Promise<User[]> {
+    return this.prismaService.user.findMany();
+  }
+
   async findUserById({ telegramId }: findUserByIdDto): Promise<User> {
     return this.prismaService.user.findUnique({
       where: { telegramId },
