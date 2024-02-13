@@ -10,18 +10,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Editor {
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  user       User @relation(fields: [telegramId], references: [telegramId], onDelete: Cascade)
-  telegramId Int  @id @map("telegram_id")
-
-  role Role @default(MANAGER)
-
-  @@map("editor")
-}
-
 enum Role {
   ADMIN
   EDITOR
@@ -35,10 +23,17 @@ model User {
   telegramId Int     @id @map("telegram_id")
   nickname   String? @unique
   threadId   Int     @unique @default(-1)
+  role       Role    @default(MANAGER)
 
-  editor Editor?
+  session Session @default(NONE)
+  json    Json?   @db.JsonB
 
   @@map("user")
+}
+
+enum Session {
+  NONE
+  COPY_APP
 }
 
 model Category {
