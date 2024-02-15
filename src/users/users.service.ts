@@ -2,12 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import {
   CreateUserDto,
+  SetSessionDto,
   findUserByIdDto,
   findUserByNicknameDto,
   findUserByThreadDto,
   setTreadDto,
 } from './dto/users.req.dto';
-import { User } from '@prisma/client';
+import { Context, Prisma, User } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
@@ -40,19 +41,39 @@ export class UsersService {
     if (foundUser) {
       if (!foundUser.nickname && dto.nickname) {
         return this.prismaService.user.update({
-          where: foundUser,
+          where: { telegramId: foundUser.telegramId },
           data: { nickname: dto.nickname },
         });
       }
+      //Clear context
+      this.setContext({
+        telegramId: foundUser.telegramId,
+        context: Context.NONE,
+        json: {},
+      });
       return foundUser;
     }
     return this.prismaService.user.create({ data: dto });
   }
 
-  async setThread({ telegramId, threadId }: setTreadDto) {
+  async setThread({ telegramId, threadId }: setTreadDto): Promise<User> {
     return this.prismaService.user.update({
       where: { telegramId },
       data: { threadId },
+    });
+  }
+
+  async setContext(dto: SetSessionDto): Promise<User> {
+    if (dto?.json) {
+      const json = dto.json as Prisma.JsonObject;
+      return this.prismaService.user.update({
+        where: { telegramId: dto.telegramId },
+        data: { ...dto, json },
+      });
+    }
+    return this.prismaService.user.update({
+      where: { telegramId: dto.telegramId },
+      data: { ...dto },
     });
   }
 }

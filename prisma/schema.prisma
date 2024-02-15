@@ -14,6 +14,7 @@ enum Role {
   ADMIN
   EDITOR
   MANAGER
+  USER
 }
 
 model User {
@@ -22,18 +23,18 @@ model User {
 
   telegramId Int     @id @map("telegram_id")
   nickname   String? @unique
-  threadId   Int     @unique @default(-1)
-  role       Role    @default(MANAGER)
+  threadId   Int     @unique @default(1)
+  role       Role    @default(USER)
 
-  session Session @default(NONE)
+  context Context @default(NONE)
   json    Json?   @db.JsonB
 
   @@map("user")
 }
 
-enum Session {
+enum Context {
   NONE
-  COPY_APP
+  COPY_ALL
 }
 
 model Category {

@@ -12,7 +12,7 @@ export class AppMarkup {
           [
             {
               text: this.text,
-              url: `https://t.me/${this.botName}/${this.appName}`,
+              url: `https://t.me/${this.botName}/${this.appName}/`,
             },
           ],
         ],

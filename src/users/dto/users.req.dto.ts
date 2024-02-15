@@ -1,3 +1,5 @@
+import { Context } from '@prisma/client';
+
 export class CreateUserDto {
   readonly telegramId: number;
   readonly nickname?: string;
@@ -18,4 +20,10 @@ export class setTreadDto {
 
 export class findUserByThreadDto {
   readonly threadId: number;
+}
+
+export class SetSessionDto {
+  readonly context?: Context;
+  readonly telegramId: number;
+  readonly json?: object;
 }
