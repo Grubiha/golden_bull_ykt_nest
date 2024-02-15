@@ -1,17 +1,21 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { TgBotService } from '../tg-bot.service';
 import TelegramBot from 'node-telegram-bot-api';
-import { BotMessagesService } from '../bot-messages/bot-message.service';
 import { UsersService } from 'src/users/users.service';
 import { Context, Prisma, Role, User } from '@prisma/client';
-import { MessagesContext } from './messages.context';
-import { TgBotErrorService } from '../tg-bot-error.service';
+import { TgBotService } from 'src/tg-bot/tg-bot.service';
+import { TgBotErrorService } from 'src/tg-bot/tg-bot-error.service';
+import { CopyToAllService } from '../services/copy-to-all.service';
+
+interface MessagesContext {
+  step?: number;
+  messageId?: number;
+}
 
 @Injectable()
-export class MessagesUpdates implements OnModuleInit {
+export class CopyToAllUpdate implements OnModuleInit {
   constructor(
     private readonly botService: TgBotService,
-    private readonly botMessagesService: BotMessagesService,
+    private readonly botMessagesService: CopyToAllService,
     private readonly error: TgBotErrorService,
     private readonly usersService: UsersService,
   ) {}
@@ -57,13 +61,17 @@ export class MessagesUpdates implements OnModuleInit {
             messageId,
             fromChatId: telegramId,
           })
-          .catch(() => {
+          .catch((e) => {
             this.error.regist(
-              'messages updates: callback_query: app-copyToAllUsers',
+              'CopyToAllUpdate: callback_query: app-copyToAllUsers',
+              e,
             );
           });
-        bot.deleteMessage(telegramId, messageId).catch(() => {
-          this.error.regist('messages updates: isRegist: bot-sendMessage');
+        bot.deleteMessage(telegramId, messageId).catch((e) => {
+          this.error.regist(
+            'CopyToAllUpdate: callback_query: bot-deleteMessage',
+            e,
+          );
         });
       }
     });
@@ -84,8 +92,8 @@ export class MessagesUpdates implements OnModuleInit {
     if (!this.checkRole(bot, chatId, user.role, [Role.ADMIN, Role.EDITOR]))
       return;
 
-    bot.sendMessage(chatId, 'Отправьте сообщение').catch(() => {
-      this.error.regist('messages updates: start: bot-sendMessage');
+    bot.sendMessage(chatId, 'Отправьте сообщение').catch((e) => {
+      this.error.regist('CopyToAllUpdate: step0: bot-sendMessage', e);
     });
     const json: MessagesContext = { step: 1 };
     this.usersService
@@ -94,8 +102,8 @@ export class MessagesUpdates implements OnModuleInit {
         context: Context.COPY_ALL,
         json,
       })
-      .catch(() => {
-        this.error.regist('messages updates: step0: db-setContext');
+      .catch((e) => {
+        this.error.regist('CopyToAllUpdate: step0: db-setContext', e);
       });
   }
 
@@ -126,21 +134,21 @@ export class MessagesUpdates implements OnModuleInit {
           inline_keyboard: [[{ text: 'отправить', callback_data: 'send' }]],
         },
       })
-      .catch(() => {
-        this.error.regist('messages updates: step1: bot-copyMessage');
+      .catch((e) => {
+        this.error.regist('CopyToAllUpdate: step1: bot-copyMessage', e);
       });
     const json: MessagesContext = {};
     this.usersService
       .setContext({ telegramId, json, context: Context.NONE })
-      .catch(() => {
-        this.error.regist('messages updates: step1: db-setContext');
+      .catch((e) => {
+        this.error.regist('CopyToAllUpdate: step1: db-setContext', e);
       });
   }
 
   private isRegist(bot: TelegramBot, chatId: number, user: User): boolean {
     if (user) return true;
-    bot.sendMessage(chatId, 'Вы не зарегистрированы').catch(() => {
-      this.error.regist('messages updates: isRegist: bot-sendMessage');
+    bot.sendMessage(chatId, 'Вы не зарегистрированы').catch((e) => {
+      this.error.regist('CopyToAllUpdate: isRegist: bot-sendMessage', e);
     });
     return false;
   }
@@ -152,16 +160,16 @@ export class MessagesUpdates implements OnModuleInit {
     allow: Role[],
   ): boolean {
     if (allow.includes(userRole)) return true;
-    bot.sendMessage(chatId, 'Нет доступа').catch(() => {
-      this.error.regist('messages updates: checkRole: bot-sendMessage');
+    bot.sendMessage(chatId, 'Нет доступа').catch((e) => {
+      this.error.regist('CopyToAllUpdate: checkRole: bot-sendMessage', e);
     });
     return false;
   }
 
   async onModuleInit() {
     console.log('messages.updates: init');
-    this.run(this.botService.getBot()).catch(() => {
-      this.error.regist('messages updates: run');
+    this.run(this.botService.getBot()).catch((e) => {
+      this.error.regist('CopyToAllUpdate: run', e);
     });
   }
 }

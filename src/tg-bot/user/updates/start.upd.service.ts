@@ -1,12 +1,39 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import TelegramBot from 'node-telegram-bot-api';
-import { TgBotService } from '../tg-bot.service';
+import { TgBotErrorService } from 'src/tg-bot/tg-bot-error.service';
+import { TgBotService } from 'src/tg-bot/tg-bot.service';
 import { UsersService } from 'src/users/users.service';
-import { AppMarkup } from './app.markup';
-import { TgBotErrorService } from '../tg-bot-error.service';
+
+class AppMarkup {
+  readonly text: string;
+  readonly appName: string;
+  readonly botName: string;
+
+  getOptions(): TelegramBot.SendMessageOptions {
+    const options: TelegramBot.SendMessageOptions = {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: this.text,
+              url: `https://t.me/${this.botName}/${this.appName}/`,
+            },
+          ],
+        ],
+      },
+    };
+    return options;
+  }
+
+  constructor(text: string, appName: string) {
+    this.text = text;
+    this.appName = appName;
+    this.botName = process.env.BOT_NAME;
+  }
+}
 
 @Injectable()
-export class UsersUpdates implements OnModuleInit {
+export class StartUpdates implements OnModuleInit {
   constructor(
     private readonly botService: TgBotService,
     private readonly usersService: UsersService,
@@ -28,8 +55,8 @@ export class UsersUpdates implements OnModuleInit {
         telegramId,
         nickname,
       })
-      .catch(() => {
-        this.error.regist('users updates: registUser: db-create');
+      .catch((e) => {
+        this.error.regist('StartUpdates: registUser: db-create', e);
       });
   }
 
@@ -37,15 +64,15 @@ export class UsersUpdates implements OnModuleInit {
     const markup = new AppMarkup('App', process.env.APP_NAME);
     bot
       .sendMessage(chatId, `Hi ${firstName}`, markup.getOptions())
-      .catch(() => {
-        this.error.regist('users updates: aendApp: bot-sendMessage');
+      .catch((e) => {
+        this.error.regist('StartUpdates: sendApp: bot-sendMessage', e);
       });
   }
 
   async onModuleInit() {
     console.log('user.updates: init');
-    this.run(this.botService.getBot()).catch(() => {
-      this.error.regist('users updates: run');
+    this.run(this.botService.getBot()).catch((e) => {
+      this.error.regist('StartUpdates: run', e);
     });
   }
 }

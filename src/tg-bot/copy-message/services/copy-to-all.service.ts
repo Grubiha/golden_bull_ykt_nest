@@ -1,16 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import { TgBotService } from '../tg-bot.service';
-import { CopyAllDto, ExceptionUser } from './bot-message.dto';
+import TelegramBot from 'node-telegram-bot-api';
+import { TgBotService } from 'src/tg-bot/tg-bot.service';
 import { UsersService } from 'src/users/users.service';
-import { TgBotErrorService } from '../tg-bot-error.service';
+
 import { setTimeout } from 'timers/promises';
 
+interface ExceptionUser {
+  nickname: string;
+  telegramId: number;
+}
+
+class CopyAllDto {
+  readonly messageId: number;
+  readonly fromChatId: TelegramBot.ChatId;
+}
+
 @Injectable()
-export class BotMessagesService {
+export class CopyToAllService {
   constructor(
     private readonly botService: TgBotService,
     private readonly usersService: UsersService,
-    private readonly error: TgBotErrorService,
   ) {}
 
   async copyToAllUsers({ messageId, fromChatId }: CopyAllDto) {
@@ -20,7 +29,8 @@ export class BotMessagesService {
 
     for (const user of users) {
       await Promise.all([
-        bot.copyMessage(user.telegramId, fromChatId, messageId).catch(() => {
+        bot.copyMessage(user.telegramId, fromChatId, messageId).catch((e) => {
+          console.log(e.message);
           exceprions.push({
             nickname: user.nickname,
             telegramId: user.telegramId,
