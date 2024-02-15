@@ -5,3 +5,7 @@ export class FindCategoryByIdDto {
 export class CreateCategoryDto {
   readonly name: string;
 }
+
+export class DeleteCategoryDto {
+  readonly id: string;
+}

@@ -4,7 +4,7 @@ import TelegramBot from 'node-telegram-bot-api';
 import { TgBotErrorService } from './tg-bot-error.service';
 
 @Injectable()
-export class IndexUpdates implements OnModuleInit {
+export class BotIndexUpdates implements OnModuleInit {
   constructor(
     private readonly botService: TgBotService,
     private readonly error: TgBotErrorService,

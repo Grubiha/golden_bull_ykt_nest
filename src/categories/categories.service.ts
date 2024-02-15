@@ -3,6 +3,7 @@ import { Category } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 import {
   CreateCategoryDto,
+  DeleteCategoryDto,
   FindCategoryByIdDto,
 } from './dto/categories.req.dto';
 
@@ -25,5 +26,10 @@ export class CategoriesService {
     return this.prismaService.category.create({
       data: { name },
     });
+  }
+  async delete({ id }: DeleteCategoryDto): Promise<Category> {
+    const foundCategory = this.findOneById({ id });
+    if (!foundCategory) return;
+    return this.prismaService.category.delete({ where: { id } });
   }
 }
