@@ -18,6 +18,7 @@ export class CategoriesService {
       where: { id },
     });
   }
+
   async create({ name }: CreateCategoryDto): Promise<Category> {
     const foundCategory = this.prismaService.category.findUnique({
       where: { name },
@@ -27,6 +28,7 @@ export class CategoriesService {
       data: { name },
     });
   }
+
   async delete({ id }: DeleteCategoryDto): Promise<Category> {
     const foundCategory = this.findOneById({ id });
     if (!foundCategory) return;

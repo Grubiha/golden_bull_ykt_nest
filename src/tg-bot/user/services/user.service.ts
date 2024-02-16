@@ -4,34 +4,7 @@ import { TgBotErrorService } from 'src/tg-bot/tg-bot-error.service';
 import { TgBotService } from 'src/tg-bot/tg-bot.service';
 import { UsersService } from 'src/users/users.service';
 import { Role, User } from '@prisma/client';
-
-class AppMarkup {
-  readonly text: string;
-  readonly appName: string;
-  readonly botName: string;
-
-  getOptions(): TelegramBot.SendMessageOptions {
-    const options: TelegramBot.SendMessageOptions = {
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: this.text,
-              url: `https://t.me/${this.botName}/${this.appName}/`,
-            },
-          ],
-        ],
-      },
-    };
-    return options;
-  }
-
-  constructor(text: string, appName: string) {
-    this.text = text;
-    this.appName = appName;
-    this.botName = process.env.BOT_NAME;
-  }
-}
+import { AppMarkup } from '../types/app-makup';
 
 @Injectable()
 export class UserService {

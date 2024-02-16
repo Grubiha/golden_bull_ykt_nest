@@ -4,12 +4,7 @@ import { TgBotErrorService } from 'src/tg-bot/tg-bot-error.service';
 import { TgBotService } from 'src/tg-bot/tg-bot.service';
 import { UsersService } from 'src/users/users.service';
 import { Context } from '@prisma/client';
-
-interface Topic {
-  message_thread_id: number;
-  name: string;
-  icon_color: number;
-}
+import { Topic } from '../types/topic';
 
 @Injectable()
 export class TopicService {

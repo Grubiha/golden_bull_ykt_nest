@@ -6,21 +6,11 @@ import { Context, Prisma, Role } from '@prisma/client';
 import { setTimeout } from 'timers/promises';
 import { TgBotErrorService } from 'src/tg-bot/tg-bot-error.service';
 import { BotUserService } from 'src/tg-bot/user';
-
-interface ExceptionUser {
-  nickname: string;
-  telegramId: number;
-}
-
-class CopyAllDto {
-  readonly messageId: number;
-  readonly fromChatId: TelegramBot.ChatId;
-}
-
-interface MessagesContext {
-  step?: number;
-  messageId?: number;
-}
+import {
+  CopyAllDto,
+  ExceptionUser,
+  MessagesContext,
+} from '../types/copy-message';
 
 @Injectable()
 export class CopyMessageService {
