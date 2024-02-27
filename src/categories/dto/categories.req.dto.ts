@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsUUID } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsBoolean, IsString, IsUUID } from 'class-validator';
 
 export class FindCategoryByIdDto {
   @ApiProperty()
@@ -17,4 +18,11 @@ export class DeleteCategoryDto {
   @ApiProperty()
   @IsUUID()
   readonly id: string;
+}
+
+export class FindManyCategoriesParams {
+  @ApiProperty()
+  @IsBoolean()
+  @Transform(({ value }) => value === 'true')
+  readonly published: boolean;
 }

@@ -28,5 +28,6 @@ import {
     BotCopyMessageCopyToAllUpdate,
   ],
   imports: [UsersModule],
+  exports: [TgBotService],
 })
 export class TgBotModule {}

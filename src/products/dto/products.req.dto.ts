@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   ArrayMinSize,
   IsArray,
+  IsBoolean,
   IsNumber,
   IsString,
   IsUUID,
@@ -44,8 +45,22 @@ export class FindProductByIdDto {
   readonly id: string;
 }
 
-export class findManyByCategoryDto {
+export class FindManyByCategoryDto {
   @ApiProperty()
   @IsUUID()
   readonly id: string;
+  @ApiProperty()
+  @IsBoolean()
+  @Transform(({ value }) => value === 'true')
+  readonly published: boolean;
+}
+
+export class FindManyProductsParams {
+  @ApiProperty()
+  @IsBoolean()
+  @Transform(({ value }) => value === 'true')
+  readonly published: boolean;
+  // @ApiProperty()
+  // @IsUUID()
+  // readonly id: string;
 }

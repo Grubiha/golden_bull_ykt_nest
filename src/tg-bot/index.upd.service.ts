@@ -32,6 +32,15 @@ export class BotIndexUpdates implements OnModuleInit {
           this.error.regist('IndexUpdates: get_topic_id: bot-sendMessage', e);
         });
     });
+    bot.onText(/^\/set/, async (msg) => {
+      bot.setMyCommands(
+        [
+          { command: '/command_1', description: 'описание' },
+          { command: '/command_2', description: 'описание' },
+        ],
+        { scope: { type: 'chat', chat_id: msg.chat.id } },
+      );
+    });
   }
 
   async onModuleInit() {

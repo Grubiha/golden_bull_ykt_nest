@@ -9,20 +9,17 @@ import {
   CreateCategoryDto,
   DeleteCategoryDto,
   FindCategoryByIdDto,
+  FindManyCategoriesParams,
 } from './dto/categories.req.dto';
 
 @Injectable()
 export class CategoriesService {
   constructor(private readonly prismaService: PrismaService) {}
-  async findAll(): Promise<Category[]> {
-    return this.prismaService.category.findMany();
-  }
 
-  async findManyPublished(): Promise<Category[]> {
+  async findMany(params: FindManyCategoriesParams): Promise<Category[]> {
+    console.log('findCategories');
     return this.prismaService.category.findMany({
-      where: {
-        published: true,
-      },
+      where: params,
     });
   }
 

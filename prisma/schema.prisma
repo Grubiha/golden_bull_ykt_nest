@@ -10,6 +10,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Token {
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  telegramId   Int    @id @map("telegram_id")
+  refreshToken String @unique @map("refresh_token")
+
+  @@map("refresh_token")
+}
+
 enum Role {
   ADMIN
   EDITOR

@@ -9,8 +9,9 @@ import {
   AddImagesDto,
   CreateProductDto,
   DeleteProductDto,
+  FindManyByCategoryDto,
+  FindManyProductsParams,
   FindProductByIdDto,
-  findManyByCategoryDto,
 } from './dto/products.req.dto';
 import { FilesService } from 'src/files/files.service';
 
@@ -21,21 +22,22 @@ export class ProductsService {
     private fileService: FilesService,
   ) {}
 
-  async findAll(): Promise<Product[]> {
-    return this.prismaService.product.findMany();
-  }
-
-  async findManyPublished(): Promise<Product[]> {
+  async findMany(params: FindManyProductsParams): Promise<Product[]> {
     return this.prismaService.product.findMany({
-      where: {
-        published: true,
-      },
+      where: params,
     });
   }
 
-  async findManyByCategory({ id }: findManyByCategoryDto): Promise<Product[]> {
+  async findManyByCategory({
+    id,
+    published,
+  }: FindManyByCategoryDto): Promise<Product[]> {
+    console.log('findProducts');
     return this.prismaService.product.findMany({
-      where: { categories: { some: { id } } },
+      where: {
+        published,
+        categories: { some: { id } },
+      },
     });
   }
 
@@ -83,7 +85,10 @@ export class ProductsService {
     });
   }
 
-  async addImage(dto: AddImagesDto, files: Express.Multer.File[]) {
+  async addImage(
+    dto: AddImagesDto,
+    files: Express.Multer.File[],
+  ): Promise<Product> {
     const foundProduct = await this.findOneById({ id: dto.id });
     if (!foundProduct) throw new NotFoundException('Продукт не найден');
 

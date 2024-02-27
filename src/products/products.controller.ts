@@ -14,25 +14,22 @@ import {
   AddImagesDto,
   CreateProductDto,
   DeleteProductDto,
-  findManyByCategoryDto,
+  FindManyByCategoryDto,
+  FindManyProductsParams,
 } from './dto/products.req.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
+// import { ApiResponse } from '@nestjs/swagger';
 
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
   @Get('all')
-  getAll() {
-    return this.productsService.findAll();
-  }
-
-  @Get('pub')
-  getMany() {
-    return this.productsService.findManyPublished();
+  getAll(@Query() params: FindManyProductsParams) {
+    return this.productsService.findMany(params);
   }
 
   @Get('by_category')
-  getByCategory(@Query() dto: findManyByCategoryDto) {
+  getByCategory(@Query() dto: FindManyByCategoryDto) {
     return this.productsService.findManyByCategory(dto);
   }
 
