@@ -5,5 +5,6 @@ import { ValidateTelegramService } from './validate-telegram.service';
 @Module({
   controllers: [ValidateTelegramController],
   providers: [ValidateTelegramService],
+  exports: [ValidateTelegramService],
 })
 export class ValidateTelegramModule {}
