@@ -10,8 +10,5 @@ export class UserDto {
 export class AuthDto {
   @ApiProperty()
   @IsString()
-  readonly nickname: string;
-  @ApiProperty()
-  @IsString()
-  readonly verify: string;
+  readonly hash: string;
 }

@@ -1,28 +1,33 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { TokensService } from './tokens.service';
 import { AuthDto } from './dto/auth,dto';
-import { TgBotService } from 'src/tg-bot/tg-bot.service';
+import { ValidateTelegramService } from 'src/validate-telegram/validate-telegram.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private prismaService: PrismaService,
     private tokensService: TokensService,
-    private botService: TgBotService,
+    private validateService: ValidateTelegramService,
   ) {}
 
-  async login({ nickname, verify }: AuthDto) {
-    const user = await this.prismaService.user.findUnique({
-      where: { nickname },
-    });
-    if (!user) throw new UnauthorizedException('Нет доступа');
+  async login(dto: AuthDto) {
+    const data = await this.validateService.validateHash(dto);
+    if (!data['telegramId']) throw new BadRequestException('Не валидный токен');
+    const telegramId = +data['telegramId'];
 
-    const botVeryfy = this.botService.getVeryfy();
-    if (botVeryfy != verify) throw new UnauthorizedException('Нет доступа');
+    const user = await this.prismaService.user.findUnique({
+      where: { telegramId },
+    });
+    if (!user) throw new UnauthorizedException('Не авторизован');
 
     return this.tokensService.setTokens({
-      nickname,
+      nickname: user.nickname,
       telegramId: user.telegramId,
       role: user.role,
     });
