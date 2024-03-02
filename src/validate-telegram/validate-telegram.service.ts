@@ -6,6 +6,7 @@ import { webcrypto } from 'crypto';
 export class ValidateTelegramService {
   async validateHash({ hash }: ValidateTelegramDto) {
     const data = Object.fromEntries(new URLSearchParams(hash));
+    console.log(data);
     const isValid = await this.isHashValid(data, process.env.BOT_TOKEN);
     if (!isValid) throw new BadRequestException('Не валидный токен');
     return data;
