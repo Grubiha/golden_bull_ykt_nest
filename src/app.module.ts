@@ -8,6 +8,7 @@ import { ProductsModule } from './products/products.module';
 import { FilesModule } from './files/files.module';
 import { AuthModule } from './auth/auth.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { ValidateTelegramModule } from './validate-telegram/validate-telegram.module';
 import * as path from 'path';
 
 @Module({
@@ -21,6 +22,7 @@ import * as path from 'path';
     ProductsModule,
     FilesModule,
     AuthModule,
+    ValidateTelegramModule,
   ],
   controllers: [AppController],
   providers: [AppService],
