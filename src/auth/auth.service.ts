@@ -20,8 +20,8 @@ export class AuthService {
     console.log(dto);
     const data = await this.validateService.validateHash(dto);
     console.log(data);
-    if (!data['id']) throw new BadRequestException('Не валидный токен');
-    const telegramId = +data['id'];
+    if (!data.id) throw new BadRequestException('Не валидный токен');
+    const telegramId = +data.id;
 
     const user = await this.prismaService.user.findUnique({
       where: { telegramId },
