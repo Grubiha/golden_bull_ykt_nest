@@ -11,6 +11,7 @@ import { webcrypto } from 'crypto';
 @Injectable()
 export class ValidateTelegramService {
   async validateHash({ hash }: ValidateTelegramDto) {
+    console.log(new URLSearchParams(hash));
     const data = Object.fromEntries(new URLSearchParams(hash));
     const isValid = await this.isHashValid(data, process.env.BOT_API_TOKEN);
     if (!isValid) throw new BadRequestException('Не валидный токен');
