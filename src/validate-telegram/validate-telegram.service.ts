@@ -2,13 +2,19 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { ValidateTelegramDto } from './dto';
 import { webcrypto } from 'crypto';
 
+// type InitData = {
+//   user: {
+//     id: number;
+//   };
+// };
+
 @Injectable()
 export class ValidateTelegramService {
   async validateHash({ hash }: ValidateTelegramDto) {
     const data = Object.fromEntries(new URLSearchParams(hash));
     const isValid = await this.isHashValid(data, process.env.BOT_API_TOKEN);
     if (!isValid) throw new BadRequestException('Не валидный токен');
-    return data['user'];
+    return data;
   }
 
   private async isHashValid(data: Record<string, string>, botToken: string) {
