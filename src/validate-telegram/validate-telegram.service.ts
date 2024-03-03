@@ -8,8 +8,7 @@ export class ValidateTelegramService {
     const data = Object.fromEntries(new URLSearchParams(hash));
     const isValid = await this.isHashValid(data, process.env.BOT_API_TOKEN);
     if (!isValid) throw new BadRequestException('Не валидный токен');
-    console.log(data, process.env.BOT_API_TOKEN);
-    return data;
+    return data['user'];
   }
 
   private async isHashValid(data: Record<string, string>, botToken: string) {
