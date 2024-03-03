@@ -20,6 +20,8 @@ export class AuthService {
     console.log(dto);
     const data = await this.validateService.validateHash(dto);
     console.log(data);
+    console.log(data['user']);
+    console.log(data['user']['id']);
     if (!data['telegramId']) throw new BadRequestException('Не валидный токен');
     const telegramId = +data['telegramId'];
 
